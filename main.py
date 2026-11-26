@@ -23,6 +23,17 @@ def main() -> int:
     if any(ord(ch) < 32 for ch in text):
         print("entry contains control characters", file=sys.stderr)
         return 1
+    # The brief requires a REAL review: a rating, a grievance and a reason.
+    # Enforce the review's shape in code: the rating word must be present,
+    # and at least one complaint cue (the grievance) must be present too.
+    lowered = text.lower()
+    if "star" not in lowered:
+        print("entry must carry its rating (a star)", file=sys.stderr)
+        return 1
+    grievance_cues = ("no ", "no-", "hasn't", "never", "not ", "worst", "awful", "terrible")
+    if not any(cue in lowered for cue in grievance_cues):
+        print("entry must carry a grievance", file=sys.stderr)
+        return 1
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "entry.txt")
